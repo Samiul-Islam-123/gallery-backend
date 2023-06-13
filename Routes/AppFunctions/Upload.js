@@ -4,6 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const FileModel = require("./../../DataBase/DataModels/FileModel");
 const DecodeToken = require("./../../Utils/TokenDecoder");
+const { spawn } = require("child_process");
+const axios = require("axios");
 
 const upload = multer({
   limits: {
@@ -27,10 +29,10 @@ UploadRoute.post("/upload-single", upload.single("file"), async (req, res) => {
   }
 
   const link = `http://localhost:5500/uploads/${file.filename}`;
-
   const decodedToken = await DecodeToken(req.body.token);
   const metadata = {
     fileName: file.filename,
+    fileSize: file.size,
     fileURL: link,
     uploadDate: new Date(Date.now()).toLocaleString(),
     owner: decodedToken.id,
